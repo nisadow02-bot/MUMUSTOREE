@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MUMUSTORE - ร้านขายรหัสและแอคเคาท์อัตโนมัติ 24 ชม.</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Kanit', sans-serif;
+      background-color: #0b0f19;
+      color: #f3f4f6;
+    }
+    .glow-purple {
+      box-shadow: 0 0 20px rgba(168, 85, 247, 0.35);
+    }
+    .glow-cyan {
+      box-shadow: 0 0 15px rgba(6, 182, 212, 0.4);
+    }
+    .glass-card {
+      background: rgba(17, 24, 39, 0.8);
+      backdrop-filter: blur(12px);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+    }
+    .nav-active {
+      color: #a855f7;
+      border-bottom: 2px solid #a855f7;
+    }
+  </style>
+</head>
+<body class="min-h-screen flex flex-col justify-between">
+
+  <!-- NAVBAR -->
+  <header class="sticky top-0 z-40 bg-gray-900/90 backdrop-blur-md border-b border-gray-800">
+    <div class="max-w-6xl mx-auto px-4 py-3 flex justify-between items-center">
+      <div class="flex items-center gap-3 cursor-pointer" onclick="switchTab('shop')">
+        <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-purple-600 to-cyan-400 flex items-center justify-center font-bold text-xl text-white shadow-lg">
+          M
+        </div>
+        <div>
+          <h1 class="text-xl font-bold tracking-wider bg-clip-text text-transparent bg-gradient-to-r from-purple-400 to-cyan-400">
+            MUMUSTORE
+          </h1>
+          <p class="text-xs text-gray-400">ระบบส่งรหัสอัตโนมัติ 24 ชม.</p>
+        </div>
+      </div>
+
+      <!-- Navigation Tabs -->
+      <nav class="flex items-center gap-2 md:gap-6 text-sm font-medium">
+        <button id="nav-shop" onclick="switchTab('shop')" class="nav-active px-3 py-2 flex items-center gap-2 transition hover:text-purple-400">
+          <i class="fa-solid fa-store"></i> <span>สินค้าทั้งหมด</span>
+        </button>
+        <button id="nav-history" onclick="switchTab('history')" class="px-3 py-2 text-gray-400 flex items-center gap-2 transition hover:text-purple-400">
+          <i class="fa-solid fa-clock-rotate-left"></i> <span>เช็คประวัติสั่งซื้อ</span>
+        </button>
+      </nav>
+    </div>
+  </header>
+
+  <!-- MAIN CONTENT -->
+  <main class="max-w-6xl mx-auto px-4 py-8 flex-1 w-full">
+
+    <!-- SHOP SECTION -->
+    <section id="sec-shop" class="space-y-6">
+      <!-- Banner -->
+      <div class="p-6 md:p-8 rounded-2xl bg-gradient-to-r from-purple-900/40 via-gray-900 to-cyan-900/30 border border-purple-500/20 relative overflow-hidden">
+        <div class="max-w-xl z-10 relative">
+          <span class="px-3 py-1 bg-purple-500/20 text-purple-300 text-xs rounded-full border border-purple-500/30">
+            <i class="fa-solid fa-bolt mr-1"></i> จัดส่งรหัสทันที 100%
+          </span>
+          <h2 class="text-2xl md:text-3xl font-bold mt-2">MUMUSTORE บริการเติมเกม-แอปพรีเมียม</h2>
+          <p class="text-gray-400 text-sm mt-1">สั่งซื้อง่าย ได้รหัสทันที ปลอดภัย รวดเร็ว ตรวจสอบประวัติสั่งซื้อย้อนหลังได้ตลอดเวลา</p>
+        </div>
+      </div>
+
+      <!-- Product Grid -->
+      <div id="product-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+        <!-- Products will be loaded dynamically -->
+        <div class="col-span-full text-center py-12 text-gray-400">
+          <i class="fa-solid fa-spinner fa-spin text-3xl text-purple-500 mb-2"></i>
+          <p>กำลังโหลดรายการสินค้า...</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- HISTORY SECTION -->
+    <section id="sec-history" class="hidden space-y-6">
+      <div class="glass-card p-6 rounded-2xl max-w-xl mx-auto">
+        <h3 class="text-xl font-bold mb-4 flex items-center gap-2">
+          <i class="fa-solid fa-magnifying-glass text-purple-400"></i> ตรวจสอบรายการสั่งซื้อ
+        </h3>
+        <form onsubmit="searchOrder(event)" class="space-y-4">
+          <div>
+            <label class="block text-sm text-gray-400 mb-1">กรอกเบอร์โทรศัพท์ที่ใช้สั่งซื้อ</label>
+            <input type="text" id="search-phone" placeholder="08XXXXXXXX" required class="w-full bg-gray-900 border border-gray-700 rounded-lg px-4 py-2.5 focus:outline-none focus:border-purple-500 text-white">
+          </div>
+          <button type="submit" class="w-full py-2.5 bg-purple-600 hover:bg-purple-500 font-semibold rounded-lg transition shadow-lg glow-purple">
+            ค้นหารายการสั่งซื้อ
+          </button>
+        </form>
+      </div>
+
+      <!-- Result Container -->
+      <div id="history-results" class="max-w-2xl mx-auto space-y-4"></div>
+    </section>
+
+  </main>
+
+  <!-- PAYMENT MODAL -->
+  <div id="payment-modal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+    <div class="glass-card max-w-md w-full rounded-2xl p-6 relative border border-purple-500/30">
+      <button onclick="closeModal()" class="absolute top-4 right-4 text-gray-400 hover:text-white text-xl">
+        <i class="fa-solid fa-xmark"></i>
+      </button>
+
+      <div id="modal-step-pay">
+        <h3 class="text-xl font-bold text-center mb-1">ชำระเงินค่าสินค้า</h3>
+        <p id="modal-product-name" class="text-center text-purple-400 text-sm font-semibold mb-4"></p>
+
+        <!-- QR Code Container -->
+        <div class="bg-white p-4 rounded-xl max-w-[220px] mx-auto mb-4 border-2 border-cyan-400/50 glow-cyan">
+          <img id="qr-img" src="https://i.ibb.co/cXDCXGJ5/IMG-2351.jpg" alt="PromptPay QR Code" class="w-full h-auto rounded">
+        </div>
+
+        <div class="text-center mb-4">
+          <p class="text-xs text-gray-400">ยอดชำระทั้งสิ้น</p>
+          <p id="modal-product-price" class="text-3xl font-bold text-cyan-400">฿0</p>
+        </div>
+
+        <form onsubmit="confirmPayment(event)" class="space-y-4">
+          <div>
+            <label class="block text-xs text-gray-400 mb-1">เบอร์โทรศัพท์ (สำหรับใช้ตรวจสอบประวัติการซื้อ)</label>
+            <input type="tel" id="pay-phone" placeholder="08XXXXXXXX" required pattern="[0-9]{9,10}" class="w-full bg-gray-900 border border-gray-700 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-purple-500 text-white">
+          </div>
+          <button type="submit" id="btn-submit-pay" class="w-full py-3 bg-gradient-to-r from-purple-600 to-cyan-500 font-bold rounded-lg transition glow-purple">
+            แจ้งชำระเงินและรับรหัสทันที
+          </button>
+        </form>
+      </div>
+
+      <!-- Result Step (Show Code) -->
+      <div id="modal-step-success" class="hidden text-center space-y-4">
+        <div class="w-16 h-16 bg-green-500/20 border border-green-500 rounded-full flex items-center justify-center mx-auto text-green-400 text-2xl">
+          <i class="fa-solid fa-check"></i>
+        </div>
+        <h3 class="text-xl font-bold text-green-400">สั่งซื้อสำเร็จ!</h3>
+        <p class="text-xs text-gray-400">รหัสผ่าน / แอคเคาท์ของคุณคือ</p>
+
+        <div class="bg-gray-900 border border-purple-500/40 rounded-xl p-4 relative group">
+          <p id="received-code" class="text-purple-300 font-mono font-bold break-all text-base"></p>
+          <button onclick="copyCode()" class="mt-3 text-xs bg-purple-600/30 hover:bg-purple-600 text-purple-300 hover:text-white px-3 py-1.5 rounded-md border border-purple-500/40 transition">
+            <i class="fa-regular fa-copy mr-1"></i> คัดลอกรหัส
+          </button>
+        </div>
+
+        <p class="text-xs text-gray-500">หมายเหตุ: รหัสนี้ถูกบันทึกในระบบประวัติการสั่งซื้อด้วยเบอร์โทรของคุณแล้ว</p>
+        <button onclick="closeModal()" class="w-full py-2 bg-gray-800 hover:bg-gray-700 text-sm font-semibold rounded-lg">
+          ปิดหน้าต่าง
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- FOOTER -->
+  <footer class="border-t border-gray-800 py-6 mt-12 bg-gray-950">
+    <div class="max-w-6xl mx-auto px-4 text-center text-xs text-gray-500">
+      <p>© 2026 MUMUSTORE. All rights reserved. ระบบจัดส่งรหัสสินค้าอัตโนมัติ</p>
+    </div>
+  </footer>
+
+  <!-- JAVASCRIPT -->
+  <script>
+    // 🔴 วาง URL ที่ได้จาก Google Apps Script ที่นี่
+    const API_URL = "https://script.google.com/macros/s/AKfycbzfGf8_WLu0m0BfXj-6y9qGRXdRRLb4a3zQRxo_O6io5WYR_Hr2hvl31wyrrUbpUvZ3Lg/exec"; 
+
+    let selectedProductId = null;
+    let allOrders = [];
+
+    // Tab Switcher
+    function switchTab(tab) {
+      const shopSec = document.getElementById('sec-shop');
+      const historySec = document.getElementById('sec-history');
+      const navShop = document.getElementById('nav-shop');
+      const navHistory = document.getElementById('nav-history');
+
+      if (tab === 'shop') {
+        shopSec.classList.remove('hidden');
+        historySec.classList.add('hidden');
+        navShop.classList.add('nav-active');
+        navHistory.classList.remove('nav-active');
+      } else {
+        shopSec.classList.add('hidden');
+        historySec.classList.remove('hidden');
+        navShop.classList.remove('nav-active');
+        navHistory.classList.add('nav-active');
+      }
+    }
+
+    // Load Products
+    async function loadProducts() {
+      const container = document.getElementById('product-grid');
+      try {
+        const res = await fetch(`${API_URL}?action=getData`);
+        const result = await res.json();
+        
+        if (result.status === 'success' && result.data.length > 0) {
+          container.innerHTML = result.data.map(p => `
+            <div class="glass-card rounded-2xl overflow-hidden hover:border-purple-500/50 transition duration-300 flex flex-col">
+              <div class="h-40 bg-gray-800 relative overflow-hidden">
+                <img src="${p.image || 'https://via.placeholder.com/300x180'}" class="w-full h-full object-cover">
+                ${p.badge ? `<span class="absolute top-3 left-3 bg-purple-600 text-white text-xs px-2.5 py-1 rounded-full font-bold shadow">${p.badge}</span>` : ''}
+                <span class="absolute bottom-3 right-3 bg-gray-900/80 backdrop-blur text-xs px-2.5 py-1 rounded-full text-gray-300 border border-gray-700">
+                  สต๊อก: <b class="${p.stock > 0 ? 'text-green-400' : 'text-red-400'}">${p.stock}</b>
+                </span>
+              </div>
+              <div class="p-5 flex-1 flex flex-col justify-between">
+                <div>
+                  <h3 class="font-bold text-lg mb-1">${p.name}</h3>
+                  <p class="text-xs text-gray-400 mb-4 line-clamp-2">${p.description || ''}</p>
+                </div>
+                <div class="flex items-center justify-between pt-3 border-t border-gray-800">
+                  <div>
+                    <span class="text-xs text-gray-400">ราคา</span>
+                    <p class="text-xl font-bold text-cyan-400">฿${p.price}</p>
+                  </div>
+                  <button onclick="openPaymentModal('${p.id}', '${p.name}', ${p.price})" 
+                    ${p.stock <= 0 ? 'disabled class="px-4 py-2 bg-gray-700 text-gray-500 rounded-lg text-sm cursor-not-allowed"' : 'class="px-4 py-2 bg-gradient-to-r from-purple-600 to-cyan-500 hover:opacity-90 font-semibold rounded-lg text-sm shadow transition shadow-purple-500/20"'} >
+                    ${p.stock > 0 ? 'สั่งซื้อทันที' : 'สินค้าหมด'}
+                  </button>
+                </div>
+              </div>
+            </div>
+          `).join('');
+        } else {
+          container.innerHTML = `<div class="col-span-full text-center py-12 text-gray-400">ยังไม่มีรายการสินค้า</div>`;
+        }
+      } catch (e) {
+        container.innerHTML = `<div class="col-span-full text-center py-12 text-red-400">ไม่สามารถโหลดข้อมูลสินค้าได้ (กรุณาเช็ค API_URL)</div>`;
+      }
+    }
+
+    // Modal Control
+    function openPaymentModal(id, name, price) {
+      selectedProductId = id;
+      document.getElementById('modal-product-name').innerText = name;
+      document.getElementById('modal-product-price').innerText = `฿${price}`;
+      document.getElementById('modal-step-pay').classList.remove('hidden');
+      document.getElementById('modal-step-success').classList.add('hidden');
+      document.getElementById('payment-modal').classList.remove('hidden');
+    }
+
+    function closeModal() {
+      document.getElementById('payment-modal').classList.add('hidden');
+    }
+
+    // Submit Payment & Auto Deliver Code
+    async function confirmPayment(e) {
+      e.preventDefault();
+      const phone = document.getElementById('pay-phone').value;
+      const btn = document.getElementById('btn-submit-pay');
+      btn.disabled = true;
+      btn.innerText = "กำลังประมวลผล...";
+
+      try {
+        const res = await fetch(API_URL, {
+          method: 'POST',
+          body: JSON.stringify({ action: 'buy', productId: selectedProductId, phone: phone })
+        });
+        const data = await res.json();
+
+        if (data.status === 'success') {
+          document.getElementById('received-code').innerText = data.code;
+          document.getElementById('modal-step-pay').classList.add('hidden');
+          document.getElementById('modal-step-success').classList.remove('hidden');
+          loadProducts(); // Refresh stock
+        } else {
+          alert("เกิดข้อผิดพลาด: " + (data.message || "สินค้าอาจจะหมด"));
+        }
+      } catch (err) {
+        alert("ไม่สามารถทำรายการได้ กรุณาลองใหม่อีกครั้ง");
+      } finally {
+        btn.disabled = false;
+        btn.innerText = "แจ้งชำระเงินและรับรหัสทันที";
+      }
+    }
+
+    // Search History Order
+    async function searchOrder(e) {
+      e.preventDefault();
+      const phone = document.getElementById('search-phone').value;
+      const resContainer = document.getElementById('history-results');
+      resContainer.innerHTML = `<p class="text-center text-gray-400 py-4"><i class="fa-solid fa-spinner fa-spin"></i> กำลังค้นหา...</p>`;
+
+      try {
+        const res = await fetch(`${API_URL}?action=getOrders`);
+        const result = await res.json();
+
+        if (result.status === 'success') {
+          const userOrders = result.data.filter(o => String(o.phone).trim() === String(phone).trim());
+          if (userOrders.length > 0) {
+            resContainer.innerHTML = userOrders.map(o => `
+              <div class="glass-card p-4 rounded-xl space-y-2 border border-purple-500/20">
+                <div class="flex justify-between items-start text-xs text-gray-400 border-b border-gray-800 pb-2">
+                  <span>เลขที่คำสั่งซื้อ: <b class="text-white">${o.orderId}</b></span>
+                  <span>${o.timestamp}</span>
+                </div>
+                <div class="flex justify-between items-center font-semibold">
+                  <span>${o.productName}</span>
+                  <span class="text-cyan-400">฿${o.price}</span>
+                </div>
+                <div class="bg-gray-900 p-2.5 rounded-lg border border-gray-800 font-mono text-sm text-purple-300 break-all">
+                  ${o.code}
+                </div>
+              </div>
+            `).join('');
+          } else {
+            resContainer.innerHTML = `<p class="text-center text-gray-400 py-4">ไม่พบประวัติการสั่งซื้อของเบอร์โทรนี้</p>`;
+          }
+        }
+      } catch (err) {
+        resContainer.innerHTML = `<p class="text-center text-red-400 py-4">เกิดข้อผิดพลาดในการดึงข้อมูล</p>`;
+      }
+    }
+
+    // Copy Code Helper
+    function copyCode() {
+      const code = document.getElementById('received-code').innerText;
+      navigator.clipboard.writeText(code);
+      alert('คัดลอกรหัสเรียบร้อยแล้ว!');
+    }
+
+    // Initialize
+    loadProducts();
+  </script>
+</body>
+</html>
